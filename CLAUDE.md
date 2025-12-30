@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Important: Documentation First
+
+**Before generating any code, always check the `/docs` directory for relevant standards and guidelines.** Key documentation:
+
+- `docs/ui.md` - UI component standards, accessibility, responsiveness, date formatting
+
 ## Commands
 
 - `npm run dev` - Start development server (http://localhost:3000)
@@ -17,6 +23,9 @@ This is a Next.js 16 application using the App Router with React 19 and TypeScri
 - Tailwind CSS 4 (via PostCSS)
 - React Compiler enabled (`reactCompiler: true` in next.config.ts)
 - Clerk authentication (`@clerk/nextjs`)
+- Drizzle ORM with Neon (PostgreSQL)
+- shadcn/ui components (installed to `src/components/ui/`)
+- date-fns for date formatting
 - Geist font family
 
 **Path alias:** `@/*` maps to `./src/*`
@@ -40,3 +49,14 @@ For server-side auth, use `auth()` from `@clerk/nextjs/server` (async/await requ
 Environment variables required in `.env.local`:
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
 - `CLERK_SECRET_KEY`
+
+## Database
+
+Drizzle ORM with Neon PostgreSQL. Use `drizzle-kit` for migrations:
+
+- `npx drizzle-kit generate` - Generate migrations
+- `npx drizzle-kit migrate` - Run migrations
+- `npx drizzle-kit studio` - Open Drizzle Studio
+
+Environment variable required:
+- `DATABASE_URL` - Neon connection string
