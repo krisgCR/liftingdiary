@@ -1,4 +1,5 @@
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { format } from "date-fns";
 
@@ -10,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getWorkoutSummary } from "./actions";
+import { getWorkoutSummary } from "@/data/workouts";
 
 export default async function Home() {
   return (
@@ -103,7 +104,13 @@ function FeatureCard({
 }
 
 async function DashboardSummary() {
-  const summary = await getWorkoutSummary();
+  const { userId } = await auth();
+
+  if (!userId) {
+    return null;
+  }
+
+  const summary = await getWorkoutSummary(userId);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">

@@ -1,82 +1,33 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { format } from "date-fns";
-
+import { format, parse } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DatePicker } from "@/components/ui/date-picker";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getWorkoutsByDate, type WorkoutWithExercises } from "./actions";
+import type { WorkoutWithExercises } from "@/data/types";
 
-export function DashboardClient() {
-  const [date, setDate] = useState<Date>(new Date());
-  const [workouts, setWorkouts] = useState<WorkoutWithExercises[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchWorkouts() {
-      setLoading(true);
-      const dateString = format(date, "yyyy-MM-dd");
-      const data = await getWorkoutsByDate(dateString);
-      setWorkouts(data);
-      setLoading(false);
-    }
-
-    fetchWorkouts();
-  }, [date]);
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-        <label htmlFor="date-picker" className="text-sm font-medium">
-          Select Date:
-        </label>
-        <DatePicker
-          date={date}
-          onDateChange={(newDate) => newDate && setDate(newDate)}
-        />
-      </div>
-
-      <section aria-labelledby="workouts-heading" className="border-t pt-6">
-        <h2 id="workouts-heading" className="text-lg font-semibold mb-4">
-          Workouts for {format(date, "do MMM yyyy")}
-        </h2>
-
-        {loading ? (
-          <WorkoutsSkeleton />
-        ) : workouts.length === 0 ? (
-          <p className="text-neutral-500 bg-neutral-50 rounded-lg p-6 text-center">
-            No workouts logged for this date.
-          </p>
-        ) : (
-          <div className="space-y-6">
-            {workouts.map((workout) => (
-              <WorkoutCard key={workout.id} workout={workout} />
-            ))}
-          </div>
-        )}
-      </section>
-    </div>
-  );
+interface WorkoutListProps {
+  workouts: WorkoutWithExercises[];
+  selectedDate: string;
 }
 
-function WorkoutsSkeleton() {
+export function WorkoutList({ workouts, selectedDate }: WorkoutListProps) {
+  const date = parse(selectedDate, "yyyy-MM-dd", new Date());
+
   return (
-    <div className="space-y-6" aria-label="Loading workouts">
-      {[1, 2].map((i) => (
-        <Card key={i}>
-          <CardHeader>
-            <Skeleton className="h-6 w-32" />
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+    <section aria-labelledby="workouts-heading" className="border-t pt-6">
+      <h2 id="workouts-heading" className="text-lg font-semibold mb-4">
+        Workouts for {format(date, "do MMM yyyy")}
+      </h2>
+
+      {workouts.length === 0 ? (
+        <p className="text-neutral-500 bg-neutral-50 rounded-lg p-6 text-center">
+          No workouts logged for this date.
+        </p>
+      ) : (
+        <div className="space-y-6">
+          {workouts.map((workout) => (
+            <WorkoutCard key={workout.id} workout={workout} />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 
